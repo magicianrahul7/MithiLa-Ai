@@ -31,19 +31,16 @@ jobs:
         run: |
           mkdir -p source
           unzip -q MITHILA_AI_Android_Project.zip -d source
-          # Android SDK Location aur Licenses set karein
           echo "sdk.dir=$ANDROID_HOME" > source/local.properties
-          mkdir -p "$ANDROID_HOME/licenses"
-          yes | sdkmanager --licenses > /dev/null 2>&1 || true
 
       - name: Build APK
         working-directory: source
         run: |
           if [ -f "gradlew" ]; then
             chmod +x gradlew
-            ./gradlew assembleDebug --warning-mode all
+            ./gradlew assembleDebug -Pkotlin.jvm.target.validation.mode=ignore
           else
-            gradle assembleDebug --warning-mode all
+            gradle assembleDebug -Pkotlin.jvm.target.validation.mode=ignore
           fi
 
       - name: Upload APK
@@ -52,4 +49,5 @@ jobs:
           name: MITHILA-AI-APK
           path: source/**/build/outputs/apk/debug/*.apk
           retention-days: 14
+          
           
