@@ -24,8 +24,6 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
-        with:
-          cmdline-tools-version: "16.0"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -34,6 +32,7 @@ jobs:
 
       - name: Extract Android project
         run: |
+          mkdir -p source
           unzip -q MITHILA_AI_Android_Project.zip -d source
 
       - name: Build APK
@@ -41,15 +40,15 @@ jobs:
         run: |
           if [ -f "gradlew" ]; then
             chmod +x gradlew
-            ./gradlew assembleDebug
+            ./gradlew assembleDebug --stacktrace
           else
-            gradle assembleDebug
+            gradle assembleDebug --stacktrace
           fi
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: MITHILA-AI-APK
-          path: source/app/build/outputs/apk/debug/*.apk
+          path: source/**/build/outputs/apk/debug/*.apk
           retention-days: 14
           
